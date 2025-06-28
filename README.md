@@ -25,8 +25,12 @@ Talep Listeleme: Destek personeli kendisine atanan talepleri ve tüm talepleri g
 
 Talep Güncelleme ve Yanıtlama: Destek personeli talepleri yanıtlayabilir, kullanıcılar cevapları görüntüleyebilir.
 
-Destek Elemanı Atanması: Destek elemanları bir queue içinden sırayla atanır. Yeni oluşturulan elemanlar queue ya dahil edilir.
+Destek Elemanı Atanması: Destek personelleri bir queue içinden sırayla atanır. Yeni oluşturulan personel de queue ya dahil edilir.
 
 Gerçek Zamanlı Durum Takibi: Taleplerin durumları güncellenir ve anlık takip sağlanır.
 
 MongoDB ile Kalıcı Veri Yönetimi: Tüm veriler MongoDB'de güvenle saklanır.
+
+Databasede bulunan kullanıcıların ve destek personelinin hesaplarına mail adresleri: "adsoyad"@gmail.com şifreleri:123 olarak girilebilir.
+
+Örneğin: kaanadasoglu@gmail.com:123
