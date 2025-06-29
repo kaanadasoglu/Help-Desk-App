@@ -8,7 +8,7 @@ const port = 5000;
 app.use(cors());
 app.use(express.json());
 
-// --- MongoDB bağlantısı ---
+
 const mongoURI = 'mongodb://localhost:27017/helpdesk_db';
 
 mongoose.connect(mongoURI, {
@@ -18,7 +18,7 @@ mongoose.connect(mongoURI, {
 .then(() => console.log("✅ MongoDB'ye bağlanıldı"))
 .catch(err => console.error("❌ MongoDB bağlantı hatası:", err));
 
-// --- Modeller ---
+
 
 const userSchema = new mongoose.Schema({
   fullName: String,
@@ -32,8 +32,8 @@ const User = mongoose.model('User', userSchema);
 const ticketSchema = new mongoose.Schema({
   title: String,
   description: String,
-  createdBy: String, // fullName olarak kaydedilecek
-  assignedTo: String, // fullName
+  createdBy: String, 
+  assignedTo: String, 
   status: { type: String, default: "Beklemede" },
   priority: String,
   dueDate: { type: Date, default: Date.now },
@@ -48,7 +48,7 @@ const ticketSchema = new mongoose.Schema({
 });
 const Ticket = mongoose.model('Ticket', ticketSchema);
 
-// --- Destek personeli kuyruğu (email) ---
+
 let supportQueue = [];
 
 async function loadSupportQueue() {
@@ -57,9 +57,9 @@ async function loadSupportQueue() {
 }
 loadSupportQueue();
 
-// --- Routes ---
 
-// Kayıt
+
+
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { fullName, email, password, role } = req.body;
@@ -91,7 +91,7 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// Login
+
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -111,7 +111,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// Tüm talepler
+
 app.get('/tickets', async (req, res) => {
   try {
     const tickets = await Ticket.find();
@@ -122,7 +122,7 @@ app.get('/tickets', async (req, res) => {
   }
 });
 
-// Atanan talepler (destek personeli email ile)
+
 app.get('/tickets/assigned/:email', async (req, res) => {
   try {
     const assignedEmail = req.params.email;
@@ -137,7 +137,7 @@ app.get('/tickets/assigned/:email', async (req, res) => {
   }
 });
 
-// Kullanıcının talepleri (email ile)
+
 app.get('/tickets/user/:email', async (req, res) => {
   try {
     const userEmail = req.params.email;
@@ -152,20 +152,19 @@ app.get('/tickets/user/:email', async (req, res) => {
   }
 });
 
-// Yeni talep oluştur
 app.post('/tickets', async (req, res) => {
   try {
-    const { title, priority, description, createdBy } = req.body; // createdBy = email
+    const { title, priority, description, createdBy } = req.body;
 
     if (supportQueue.length === 0) {
       return res.status(500).json({ message: "Şu anda destek personeli yok." });
     }
 
-    // Kullanıcının ismini al
+   
     const user = await User.findOne({ email: createdBy });
     if (!user) return res.status(400).json({ message: "Kullanıcı bulunamadı." });
 
-    // Round robin atanacak destek personeli
+
     const assignedEmail = supportQueue.shift();
     supportQueue.push(assignedEmail);
 
@@ -191,7 +190,7 @@ app.post('/tickets', async (req, res) => {
   }
 });
 
-// Talebe cevap ekle
+
 app.post('/tickets/:id/respond', async (req, res) => {
   try {
     const ticketId = req.params.id;
@@ -203,7 +202,7 @@ app.post('/tickets/:id/respond', async (req, res) => {
     const responderUser = await User.findOne({ email: responderEmail });
     if (!responderUser) return res.status(404).json({ message: "Cevap veren kullanıcı bulunamadı" });
 
-    // Yetki kontrolü: sadece atanmış destek personeli cevap verebilir
+   
     if (ticket.assignedTo !== responderUser.fullName) {
       return res.status(403).json({ message: "Bu talebe cevap verme yetkiniz yok" });
     }
@@ -227,7 +226,7 @@ app.post('/tickets/:id/respond', async (req, res) => {
   }
 });
 
-// Talebi çözülmüş olarak işaretle
+
 app.post('/tickets/:id/resolve', async (req, res) => {
   try {
     const ticketId = req.params.id;
